@@ -10,7 +10,7 @@ using OpenNI;
 
 namespace NUIResearchTools
 {
-    public class NUIHandGenerator
+    public class NUIHandTracker
     {
         private Context context;
         private HandsGenerator handGen;
@@ -20,9 +20,9 @@ namespace NUIResearchTools
         public Point3D handPosition { get { return _handPosition; } }
         public float updateFPS { get; set; }
 
-        private const float DEFAULT_UPDATE_FPS = 30;
+        private const float DEFAULT_UPDATE_FPS = 60f;
 
-        public NUIHandGenerator()
+        public NUIHandTracker()
         {
             // Create a new OpenNI context.
             this.context = new Context(@"..\..\openniconfig.xml");
@@ -43,14 +43,15 @@ namespace NUIResearchTools
             updateFPS = DEFAULT_UPDATE_FPS;
         }
 
-        public void StartGenerating()
+        public void StartTracking()
         {
             gestureGen.StartGenerating();
             handGen.StartGenerating();
 
             DispatcherTimer dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)(1000 / updateFPS));
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, (int) (1000f / updateFPS));
+            Console.WriteLine("Hand tracker timer interval is {0}", dispatcherTimer.Interval);
             dispatcherTimer.Start();
         }
 
@@ -86,18 +87,6 @@ namespace NUIResearchTools
                 Console.WriteLine("Exception occurred while attempting to get update from OpenNI hand generator:");
                 Console.WriteLine(ex.Message);
             }
-
-            //Console.WriteLine("{0} {1}", gestureGen.IsGenerating, gestureGen.IsNewDataAvailable);
-            //Console.WriteLine("{0}", handGen.IsGenerating);
-
-            //Console.Write("{0}: ", gestureGen.GetAllActiveGestures().Length);
-            //for (int i = 0; i < gestureGen.GetAllActiveGestures().Length; i++)
-            //{
-            //    Console.Write("{0} ", gestureGen.GetAllActiveGestures()[i]);
-            //}
-            //Console.WriteLine("");
-
-
         }
 
     }

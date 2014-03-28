@@ -36,6 +36,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\OpenNI\Bin\OpenNI.Net.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -47,9 +49,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NUICursorTracker.cs" />
     <Compile Include="NUIDepthGenerator.cs" />
-    <Compile Include="NUIHandGenerator.cs" />
+    <Compile Include="NUIHandTracker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NUICursorTools\NUICursorTools.csproj">
+      <Project>{C5C67A49-CDCA-44AE-BB10-23080362DA97}</Project>
+      <Name>NUICursorTools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

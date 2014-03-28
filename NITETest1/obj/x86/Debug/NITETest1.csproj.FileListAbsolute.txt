@@ -14,3 +14,5 @@ C:\Users\obormot\Documents\Visual Studio 2010\Projects\NITETest1\NITETest1\obj\x
 C:\Users\obormot\Documents\Visual Studio 2010\Projects\NITETest1\NITETest1\bin\Debug\NUICursorTools.dll
 C:\Users\obormot\Documents\Visual Studio 2010\Projects\NITETest1\NITETest1\bin\Debug\NUICursorTools.pdb
 C:\Users\obormot\Documents\Visual Studio 2010\Projects\NITETest1\NITETest1\obj\x86\Debug\NITETest1.csprojResolveAssemblyReference.cache
+C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NITETest1\bin\Debug\NUIResearchTools.dll
+C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NITETest1\bin\Debug\NUIResearchTools.pdb

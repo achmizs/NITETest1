@@ -15,8 +15,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Threading;
 using System.IO;
-using OpenNI;
-using NUICursorTools;
 using NUIResearchTools;
 
 namespace NITETest1
@@ -26,13 +24,8 @@ namespace NITETest1
     /// </summary>
     public partial class MainWindow : Window
     {
-        // Tracking the hand.
-        private NUIHandGenerator handGenerator;
-
         // Tracking the cursor.
-        private PointF projectedHandPosition;
-        private PointF cursorPosition;
-        private NUICursorShaper shaper;
+        private NUICursorTracker cursorTracker;
 
         // Background images.
         private BitmapImage windowsBackground;
@@ -41,28 +34,43 @@ namespace NITETest1
 
         // Stuff for the cursor hitting the target.
         int framesHovering;
-        static int hoverFramesThreshold = 30;
+        static float hoverTimeThreshold = 0.5f;
         bool clickedLeft;
         bool clickedRight;
-        
+
+        public float updateFPS { get; set; }
+
+        private const float DEFAULT_UPDATE_FPS = 60f;
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void Update()
+        private void UpdateUI()
         {
-            // Updating the cursor.
-            projectedHandPosition = new PointF(handGenerator.handPosition.X, handGenerator.handPosition.Y);
-            cursorPosition = shaper.shape(projectedHandPosition);
-            DrawCursorAtPosition(cursorPosition);
+            DrawCursorAtPosition(cursorTracker.cursorPosition);
 
             // Checking for clicks and setting background.
             checkForTargetHover();
             if (clickedLeft)
+            {
                 background.Source = aquamarinePic;
+            }
             else if (clickedRight)
+            {
                 background.Source = archipelagoPic;
+            }
+        }
+
+        private bool cursorIsHoveringOnElement(FrameworkElement element)
+        {
+            // Get coordinates of element
+            System.Windows.Point elementOrigin = element.TransformToAncestor(Application.Current.MainWindow).Transform(new System.Windows.Point(0, 0));
+            // Get rectangle circumscribing element
+            RectangleF elementRect = new RectangleF((float)elementOrigin.X, (float)elementOrigin.Y, (float)element.Width, (float)element.Height);
+
+            return elementRect.Contains(cursorTracker.cursorPosition);
         }
 
         private void checkForTargetHover()
@@ -70,37 +78,27 @@ namespace NITETest1
             clickedLeft = false;
             clickedRight = false;
 
-            // Get coordinates of left target origin
-            System.Windows.Point leftTargetOrigin = leftTarget.TransformToAncestor(Application.Current.MainWindow).Transform(new System.Windows.Point(0, 0));
-            // Get rectangle circumscribing left origin
-            RectangleF leftTargetRect = new RectangleF((float) leftTargetOrigin.X, (float) leftTargetOrigin.Y, (float) leftTarget.Width, (float) leftTarget.Height);
-
-            // Get coordinates of right target origin
-            System.Windows.Point rightTargetOrigin = rightTarget.TransformToAncestor(Application.Current.MainWindow).Transform(new System.Windows.Point(0, 0));
-            // Get rectangle circumscribing left origin
-            RectangleF rightTargetRect = new RectangleF((float)rightTargetOrigin.X, (float)rightTargetOrigin.Y, (float)rightTarget.Width, (float)rightTarget.Height);
-
             //if (mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)) != null &&
             //    mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)).Equals(leftTarget))
-            if(leftTargetRect.Contains(cursorPosition))
+            if(cursorIsHoveringOnElement(leftTarget))
             {
-                Console.WriteLine("Hitting left target!");
+                //Console.WriteLine("Hitting left target!");
                 framesHovering++;
-                if (framesHovering > hoverFramesThreshold)
+                if (framesHovering > updateFPS * hoverTimeThreshold)
                     clickedLeft = true;
             }
             //else if (mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)) != null &&
             //    mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)).Equals(rightTarget))
-            else if(rightTargetRect.Contains(cursorPosition))
+            else if (cursorIsHoveringOnElement(rightTarget))
             {
-                Console.WriteLine("Hitting right target!");
+                //Console.WriteLine("Hitting right target!");
                 framesHovering++;
-                if (framesHovering > hoverFramesThreshold)
+                if (framesHovering > updateFPS * hoverTimeThreshold)
                     clickedRight = true;
             }
             else
             {
-                Console.WriteLine("Not hitting any target!");
+                //Console.WriteLine("Not hitting any target!");
                 framesHovering = 0;
             }
         }
@@ -115,57 +113,61 @@ namespace NITETest1
             this.verticalCursor.SetValue(Canvas.LeftProperty, position.X - (verticalCursor.Width / 2));
         }
 
+        private void SetupUI()
+        {
+            Console.WriteLine("Screen dimensions: {0} x {1}", System.Windows.SystemParameters.PrimaryScreenWidth, System.Windows.SystemParameters.PrimaryScreenHeight);
+
+            // Setting up the UI.
+            mainCanvas.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
+            mainCanvas.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
+
+            background.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
+            background.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
+
+            windowsBackground = new BitmapImage(new Uri("images/windows_background_1920_1080.jpg", UriKind.Relative));
+            aquamarinePic = new BitmapImage(new Uri("images/aquamarine2x.jpg", UriKind.Relative));
+            archipelagoPic = new BitmapImage(new Uri("images/archipelago2x.jpg", UriKind.Relative));
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                Console.WriteLine("Screen dimensions: {0} x {1}", System.Windows.SystemParameters.PrimaryScreenWidth, System.Windows.SystemParameters.PrimaryScreenHeight);
+                // Set up the UI.
+                SetupUI();
 
-                // Setting up the UI.
-                mainCanvas.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
-                mainCanvas.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
+                // Set update FPS to default.
+                updateFPS = DEFAULT_UPDATE_FPS;
 
-                background.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
-                background.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
-
-                windowsBackground = new BitmapImage(new Uri("images/windows_background_1920_1080.jpg", UriKind.Relative));
-                aquamarinePic = new BitmapImage(new Uri("images/aquamarine2x.jpg", UriKind.Relative));
-                archipelagoPic = new BitmapImage(new Uri("images/archipelago2x.jpg", UriKind.Relative));
-
-                // Create the hand generator and have it start generating.
-                handGenerator = new NUIHandGenerator();
-                handGenerator.StartGenerating();
-                
-                // NUICursorTools stuff
-                shaper = new NUICursorShaper();
-                NUICursorSpaceTransform space = new NUICursorSpaceTransform(new RectangleF(-320, -240, 640, 480), new RectangleF(0, 0, (float) System.Windows.SystemParameters.PrimaryScreenWidth, (float) System.Windows.SystemParameters.PrimaryScreenHeight), false, true, NUICursorSpaceTransform.NUI_CURSOR_SPACE_TRANSFORM_MODE.FILL);
-                shaper.addTransform(space);
-                NUICursorJitterTransform jitter = new NUICursorJitterTransform();
-                shaper.addTransform(jitter);
+                // Create the cursor tracker and have it start tracking.
+                cursorTracker = new NUICursorTracker();
+                cursorTracker.StartTracking();
 
                 // Hover detection stuff
                 framesHovering = 0;
                 clickedLeft = false;
                 clickedRight = false;
+
+                // Start the screen redraw run loop.
+                DispatcherTimer dispatcherTimer = new DispatcherTimer();
+                dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)(1000f / updateFPS));
+                dispatcherTimer.Start();
+
+                Console.WriteLine("Finished loading.");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error initializing OpenNI.\n" + ex.Message);
+                MessageBox.Show("An error occurred!\n" + ex.Message);
                 //MessageBox.Show(ex.Message);
                 this.Close();
             }
 
-            DispatcherTimer dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 16);
-            dispatcherTimer.Start();
-
-            Console.WriteLine("Finished loading.");
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            Update();
+            UpdateUI();
         }
 
         public static BitmapImage BitmapImageFromBitmap(Bitmap bitmap)
