@@ -16,8 +16,8 @@ using System.Drawing.Imaging;
 using System.Windows.Threading;
 using System.IO;
 using OpenNI;
-using NITE;
 using NUICursorTools;
+using NUIResearchTools;
 
 namespace NITETest1
 {
@@ -26,13 +26,13 @@ namespace NITETest1
     /// </summary>
     public partial class MainWindow : Window
     {
+        // OpenNI stuff (for hand tracking).
         private Context context;
-        private DepthGenerator depth;
-        private Bitmap bitmap;
         private HandsGenerator handGen;
         private GestureGenerator gestureGen;
-
         private Point3D handPosition;
+
+        // Tracking the hand.
         private PointF projectedHandPosition;
         private PointF cursorPosition;
         private NUICursorShaper shaper;
@@ -112,16 +112,28 @@ namespace NITETest1
             clickedLeft = false;
             clickedRight = false;
 
-            if (mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)) != null &&
-                mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)).Equals(leftTarget))
+            // Get coordinates of left target origin
+            System.Windows.Point leftTargetOrigin = leftTarget.TransformToAncestor(Application.Current.MainWindow).Transform(new System.Windows.Point(0, 0));
+            // Get rectangle circumscribing left origin
+            RectangleF leftTargetRect = new RectangleF((float) leftTargetOrigin.X, (float) leftTargetOrigin.Y, (float) leftTarget.Width, (float) leftTarget.Height);
+
+            // Get coordinates of right target origin
+            System.Windows.Point rightTargetOrigin = rightTarget.TransformToAncestor(Application.Current.MainWindow).Transform(new System.Windows.Point(0, 0));
+            // Get rectangle circumscribing left origin
+            RectangleF rightTargetRect = new RectangleF((float)rightTargetOrigin.X, (float)rightTargetOrigin.Y, (float)rightTarget.Width, (float)rightTarget.Height);
+
+            //if (mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)) != null &&
+            //    mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)).Equals(leftTarget))
+            if(leftTargetRect.Contains(cursorPosition))
             {
                 Console.WriteLine("Hitting left target!");
                 framesHovering++;
                 if (framesHovering > hoverFramesThreshold)
                     clickedLeft = true;
             }
-            else if (mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)) != null &&
-                mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)).Equals(rightTarget))
+            //else if (mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)) != null &&
+            //    mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)).Equals(rightTarget))
+            else if(rightTargetRect.Contains(cursorPosition))
             {
                 Console.WriteLine("Hitting right target!");
                 framesHovering++;
@@ -163,14 +175,6 @@ namespace NITETest1
                 
                 this.context = new Context(@"..\..\openniconfig.xml");
                 //this.context = Context.CreateFromXmlFile(@"openniconfig.xml");
-
-                this.depth = context.FindExistingNode(NodeType.Depth) as DepthGenerator;
-                if (this.depth == null)
-                    throw new Exception(@"Error in openniconfig.xml. No depth node found.");
-                MapOutputMode mapMode = this.depth.MapOutputMode;
-                this.bitmap = new Bitmap((int)mapMode.XRes, (int)mapMode.YRes, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-                Console.WriteLine("{0}, {1}", bitmap.Width, bitmap.Height);
 
                 gestureGen = new GestureGenerator(this.context);
                 //gestureGen.GestureRecognized += new EventHandler<GestureRecognizedEventArgs>(gestureGen_GestureRecognized);
