@@ -6,3 +6,11 @@ C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTool
 C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTools\obj\Debug\NUIResearchTools.pdb
 C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTools\bin\Debug\NUICursorTools.dll
 C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTools\bin\Debug\NUICursorTools.pdb
+C:\Users\sachmiz\Documents\NITETest1\NUIResearchTools\obj\Debug\NUIResearchTools.csprojResolveAssemblyReference.cache
+C:\Users\sachmiz\Documents\NITETest1\NUIResearchTools\obj\Debug\NUIResearchTools.dll
+C:\Users\sachmiz\Documents\NITETest1\NUIResearchTools\obj\Debug\NUIResearchTools.pdb
+C:\Users\sachmiz\Documents\NITETest1\NUIResearchTools\bin\Debug\NUIResearchTools.dll
+C:\Users\sachmiz\Documents\NITETest1\NUIResearchTools\bin\Debug\NUIResearchTools.pdb
+C:\Users\sachmiz\Documents\NITETest1\NUIResearchTools\bin\Debug\NUICursorTools.dll
+C:\Users\sachmiz\Documents\NITETest1\NUIResearchTools\bin\Debug\OpenNI.Net.dll
+C:\Users\sachmiz\Documents\NITETest1\NUIResearchTools\bin\Debug\NUICursorTools.pdb

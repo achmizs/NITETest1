@@ -16,3 +16,21 @@ C:\Users\obormot\Documents\Visual Studio 2010\Projects\NITETest1\NITETest1\bin\D
 C:\Users\obormot\Documents\Visual Studio 2010\Projects\NITETest1\NITETest1\obj\x86\Debug\NITETest1.csprojResolveAssemblyReference.cache
 C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NITETest1\bin\Debug\NUIResearchTools.dll
 C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NITETest1\bin\Debug\NUIResearchTools.pdb
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\NITETest1.exe
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\NITETest1.pdb
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\bin\Debug\NITETest1.exe
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\bin\Debug\NITETest1.pdb
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\bin\Debug\NUIResearchTools.dll
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\bin\Debug\OpenNI.Net.dll
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\bin\Debug\XnVNITE.net.dll
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\bin\Debug\NUICursorTools.dll
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\bin\Debug\NUIResearchTools.pdb
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\bin\Debug\NUICursorTools.pdb
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\NITETest1.csprojResolveAssemblyReference.cache
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\MainWindow.baml
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\MainWindow.g.cs
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\App.g.cs
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\NITETest1_MarkupCompile.cache
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\NITETest1.g.resources
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\NITETest1.Properties.Resources.resources
+C:\Users\sachmiz\Documents\NITETest1\NITETest1\obj\x86\Debug\NITETest1.csproj.GenerateResource.Cache

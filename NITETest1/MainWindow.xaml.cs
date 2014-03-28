@@ -31,6 +31,12 @@ namespace NITETest1
         private BitmapImage windowsBackground;
         private BitmapImage aquamarinePic;
         private BitmapImage archipelagoPic;
+        private BitmapImage deepspacePic;
+        private BitmapImage mountainsPic;
+        private BitmapImage spacePic;
+        private BitmapImage starwarsPic;
+
+        private List<BitmapImage> backgroundPics;
 
         // Stuff for the cursor hitting the target.
         int framesHovering;
@@ -105,12 +111,15 @@ namespace NITETest1
 
         private void DrawCursorAtPosition(PointF position)
         {
-            //this.cursor.SetValue(Canvas.LeftProperty, position.X - (cursor.Width / 2));
-            //this.cursor.SetValue(Canvas.TopProperty, position.Y - (cursor.Height / 2));
-            //this.cursorOutline.SetValue(Canvas.LeftProperty, position.X - (cursorOutline.Width / 2));
-            //this.cursorOutline.SetValue(Canvas.TopProperty, position.Y - (cursorOutline.Height / 2));
+            this.cursor.SetValue(Canvas.LeftProperty, position.X - (cursor.Width / 2));
+            this.cursor.SetValue(Canvas.TopProperty, position.Y - (cursor.Height / 2));
+            this.cursorOutline.SetValue(Canvas.LeftProperty, position.X - (cursorOutline.Width / 2));
+            this.cursorOutline.SetValue(Canvas.TopProperty, position.Y - (cursorOutline.Height / 2));
 
-            this.verticalCursor.SetValue(Canvas.LeftProperty, position.X - (verticalCursor.Width / 2));
+            //this.verticalCursor.SetValue(Canvas.LeftProperty, position.X - (verticalCursor.Width / 2));
+
+            //Canvas.SetTop(test, position.Y);
+            //Canvas.SetLeft(test, position.X);
         }
 
         private void SetupUI()
@@ -127,6 +136,13 @@ namespace NITETest1
             windowsBackground = new BitmapImage(new Uri("images/windows_background_1920_1080.jpg", UriKind.Relative));
             aquamarinePic = new BitmapImage(new Uri("images/aquamarine2x.jpg", UriKind.Relative));
             archipelagoPic = new BitmapImage(new Uri("images/archipelago2x.jpg", UriKind.Relative));
+            deepspacePic = new BitmapImage(new Uri("images/deepspace.jpg", UriKind.Relative));
+            mountainsPic = new BitmapImage(new Uri("images/mountains.jpg", UriKind.Relative));
+            spacePic = new BitmapImage(new Uri("images/space.jpg", UriKind.Relative));
+            starwarsPic = new BitmapImage(new Uri("images/starwars.jpg", UriKind.Relative));
+
+            backgroundPics = new List<BitmapImage>();
+            backgroundPics.Add(windowsBackground);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
