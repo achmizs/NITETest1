@@ -19,7 +19,7 @@ namespace NUIResearchTools
         public Bitmap depthImage { get { return bitmap; } }
         public float updateFPS { get; set; }
 
-        private static const float DEFAULT_UPDATE_FPS = 30;
+        private const float DEFAULT_UPDATE_FPS = 30;
 
         public NUIDepthGenerator()
         {
@@ -44,7 +44,7 @@ namespace NUIResearchTools
         {
             DispatcherTimer dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 16);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, (int) (1000 / updateFPS));
             dispatcherTimer.Start();
         }
 

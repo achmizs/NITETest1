@@ -167,6 +167,10 @@
       <Project>{C5C67A49-CDCA-44AE-BB10-23080362DA97}</Project>
       <Name>NUICursorTools</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NUIResearchTools\NUIResearchTools.csproj">
+      <Project>{6FE08BD3-E635-4BDD-9356-839995E01A7D}</Project>
+      <Name>NUIResearchTools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

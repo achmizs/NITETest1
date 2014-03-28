@@ -26,13 +26,10 @@ namespace NITETest1
     /// </summary>
     public partial class MainWindow : Window
     {
-        // OpenNI stuff (for hand tracking).
-        private Context context;
-        private HandsGenerator handGen;
-        private GestureGenerator gestureGen;
-        private Point3D handPosition;
-
         // Tracking the hand.
+        private NUIHandGenerator handGenerator;
+
+        // Tracking the cursor.
         private PointF projectedHandPosition;
         private PointF cursorPosition;
         private NUICursorShaper shaper;
@@ -53,46 +50,10 @@ namespace NITETest1
             InitializeComponent();
         }
 
-        private unsafe void UpdateDepth()
+        private void Update()
         {
-            //Console.WriteLine("Starting to update depth...");
-            
-            DepthMetaData depthMD = new DepthMetaData();
-
-            System.Drawing.Rectangle rect = new System.Drawing.Rectangle(0, 0, this.bitmap.Width, this.bitmap.Height);
-            BitmapData data = this.bitmap.LockBits(rect, ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-            depth.GetMetaData(depthMD);
-
-            //Console.WriteLine("{0}, {1}", depthMD.XRes, depthMD.YRes);
-
-            ushort* pDepth = (ushort*)this.depth.DepthMapPtr.ToPointer();
-
-            byte* pDest;
-            
-            for (int y = 0; y < depthMD.YRes; y++)
-            {
-                pDest = (byte*)data.Scan0.ToPointer() + y * data.Stride;
-                for (int x = 0; x < depthMD.XRes; x++, pDepth++, pDest += 3)
-                {
-                    pDest[0] = (byte)(*pDepth >> 2);
-                    pDest[1] = (byte)(*pDepth >> 3);
-                    pDest[2] = (byte)(*pDepth >> 4);
-                }
-            }
-
-            //pDest = (byte*)data.Scan0.ToPointer() + ((int)handPosition.Y * -1 + 240) * data.Stride; // 0 should be y
-            //pDest += 3 * ((int)handPosition.X + 320);
-            //pDest[0] = 255;
-            //pDest[1] = 255;
-            //pDest[2] = 255;
-
-            this.bitmap.UnlockBits(data);
-
-            //image1.Source = getBitmapImage(bitmap);
-
             // Updating the cursor.
-            projectedHandPosition = new PointF(handPosition.X, handPosition.Y);
+            projectedHandPosition = new PointF(handGenerator.handPosition.X, handGenerator.handPosition.Y);
             cursorPosition = shaper.shape(projectedHandPosition);
             DrawCursorAtPosition(cursorPosition);
 
@@ -102,9 +63,6 @@ namespace NITETest1
                 background.Source = aquamarinePic;
             else if (clickedRight)
                 background.Source = archipelagoPic;
-
-
-            //Console.WriteLine("Finished updating depth.");
         }
 
         private void checkForTargetHover()
@@ -163,6 +121,7 @@ namespace NITETest1
             {
                 Console.WriteLine("Screen dimensions: {0} x {1}", System.Windows.SystemParameters.PrimaryScreenWidth, System.Windows.SystemParameters.PrimaryScreenHeight);
 
+                // Setting up the UI.
                 mainCanvas.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
                 mainCanvas.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
 
@@ -172,49 +131,11 @@ namespace NITETest1
                 windowsBackground = new BitmapImage(new Uri("images/windows_background_1920_1080.jpg", UriKind.Relative));
                 aquamarinePic = new BitmapImage(new Uri("images/aquamarine2x.jpg", UriKind.Relative));
                 archipelagoPic = new BitmapImage(new Uri("images/archipelago2x.jpg", UriKind.Relative));
+
+                // Create the hand generator and have it start generating.
+                handGenerator = new NUIHandGenerator();
+                handGenerator.StartGenerating();
                 
-                this.context = new Context(@"..\..\openniconfig.xml");
-                //this.context = Context.CreateFromXmlFile(@"openniconfig.xml");
-
-                gestureGen = new GestureGenerator(this.context);
-                //gestureGen.GestureRecognized += new EventHandler<GestureRecognizedEventArgs>(gestureGen_GestureRecognized);
-                gestureGen.GestureRecognized += gestureGen_GestureRecognized;
-                Console.Write("{0}: ", gestureGen.NumberOfEnumeratedGestures);
-                for (int i = 0; i < gestureGen.NumberOfEnumeratedGestures; i++)
-                {
-                    Console.Write("{0} ", gestureGen.EnumerateAllGestures()[i]);
-                }
-                Console.WriteLine("");
-
-                Console.WriteLine("{0}", gestureGen.IsGestureAvailable("Wave"));
-
-                Console.Write("{0}: ", gestureGen.GetAllActiveGestures().Length);
-                for (int i = 0; i < gestureGen.GetAllActiveGestures().Length; i++)
-                {
-                    Console.Write("{0} ", gestureGen.GetAllActiveGestures()[i]);
-                }
-                Console.WriteLine("");
-                gestureGen.AddGesture("Wave");
-                Console.Write("{0}: ", gestureGen.GetAllActiveGestures().Length);
-                for (int i = 0; i < gestureGen.GetAllActiveGestures().Length; i++)
-                {
-                    Console.Write("{0} ", gestureGen.GetAllActiveGestures()[i]);
-                }
-                Console.WriteLine("");
-                //Console.WriteLine("{0}", gestureGen.IsGenerating);
-                //gestureGen.StartGenerating();
-                //Console.WriteLine("{0}", gestureGen.IsGenerating);
-
-                // Hand tracking code
-                handGen = new HandsGenerator(this.context);
-                //handGen.HandCreate += new EventHandler<HandCreateEventArgs>(handGen_HandCreate);
-                handGen.HandCreate += handGen_HandCreate;
-                handGen.HandUpdate += handGen_HandUpdate;
-                handGen.HandDestroy += handGen_HandDestroy;
-                Console.WriteLine("Is handGen generating? {0}", handGen.IsGenerating);
-                handGen.StartGenerating();
-                Console.WriteLine("Is handGen generating? {0}", handGen.IsGenerating);
-
                 // NUICursorTools stuff
                 shaper = new NUICursorShaper();
                 NUICursorSpaceTransform space = new NUICursorSpaceTransform(new RectangleF(-320, -240, 640, 480), new RectangleF(0, 0, (float) System.Windows.SystemParameters.PrimaryScreenWidth, (float) System.Windows.SystemParameters.PrimaryScreenHeight), false, true, NUICursorSpaceTransform.NUI_CURSOR_SPACE_TRANSFORM_MODE.FILL);
@@ -238,59 +159,16 @@ namespace NITETest1
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 16);
             dispatcherTimer.Start();
+
             Console.WriteLine("Finished loading.");
-        }
-
-        void gestureGen_GestureRecognized(object sender, GestureRecognizedEventArgs e)
-        {
-            Console.WriteLine("Recognized a gesture!");
-            handGen.StartTracking(e.EndPosition);
-        }
-
-        private void handGen_HandCreate(object sender, HandCreateEventArgs e)
-        {
-            Console.WriteLine("Created a hand!");
-            //background.Source = archipelagoPic;
-        }
-
-        private void handGen_HandUpdate(object sender, HandUpdateEventArgs e)
-        {
-            //Console.WriteLine("{0}, {1}, {2}", e.Position.X, e.Position.Y, e.Position.Z);
-            handPosition = e.Position;
-        }
-
-        private void handGen_HandDestroy(object sender, HandDestroyEventArgs e)
-        {
-            //background.Source = aquamarinePic;
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            try
-            {
-                this.context.WaitAnyUpdateAll();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-            UpdateDepth();
-
-            //Console.WriteLine("{0} {1}", gestureGen.IsGenerating, gestureGen.IsNewDataAvailable);
-            //Console.WriteLine("{0}", handGen.IsGenerating);
- 
-            //Console.Write("{0}: ", gestureGen.GetAllActiveGestures().Length);
-            //for (int i = 0; i < gestureGen.GetAllActiveGestures().Length; i++)
-            //{
-            //    Console.Write("{0} ", gestureGen.GetAllActiveGestures()[i]);
-            //}
-            //Console.WriteLine("");
-
-            
+            Update();
         }
 
-        public static BitmapImage getBitmapImage(Bitmap bitmap)
+        public static BitmapImage BitmapImageFromBitmap(Bitmap bitmap)
         {
             MemoryStream ms = new MemoryStream();
             bitmap.Save(ms, ImageFormat.Png);
