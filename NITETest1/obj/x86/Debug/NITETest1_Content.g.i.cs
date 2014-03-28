@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("openniconfig.xml")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("images/archipelago2x.jpg")]
 
 
