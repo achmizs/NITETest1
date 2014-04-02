@@ -12,17 +12,23 @@ namespace NUIResearchTools
 {
     public class NUICursorTracker
     {
+        // MEMBER VARIABLES
+        
         // Tracking the hand.
         private NUIHandTracker handTracker;
 
         // Generating the cursor position.
-        private PointF projectedHandPosition;
+        public PointF projectedHandPosition { get; private set; }
         private NUICursorShaper shaper;
-        private PointF _cursorPosition;
-        public PointF cursorPosition { get { return _cursorPosition; } }
-        public float updateFPS { get; set; }
+        //private PointF _cursorPosition;
+        public PointF cursorPosition { get; private set; }
 
+        // Update at this many frames per second.
+        public float updateFPS { get; set; }
         private const float DEFAULT_UPDATE_FPS = 60f;
+
+
+        // CONSTRUCTOR
 
         public NUICursorTracker()
         {
@@ -35,10 +41,15 @@ namespace NUIResearchTools
             shaper.addTransform(space);
             NUICursorJitterTransform jitter = new NUICursorJitterTransform();
             shaper.addTransform(jitter);
+            NUICursorBoxConstrainTransform box = new NUICursorBoxConstrainTransform(new RectangleF(0, 0, (float)System.Windows.SystemParameters.PrimaryScreenWidth, (float)System.Windows.SystemParameters.PrimaryScreenHeight));
+            shaper.addTransform(box);
 
             // Set update FPS to default.
             updateFPS = DEFAULT_UPDATE_FPS;
         }
+
+
+        // METHODS
 
         public void StartTracking()
         {
@@ -55,7 +66,7 @@ namespace NUIResearchTools
         {
             // Updating the cursor.
             projectedHandPosition = new PointF(handTracker.handPosition.X, handTracker.handPosition.Y);
-            _cursorPosition = shaper.shape(projectedHandPosition);
+            cursorPosition = shaper.shape(projectedHandPosition);
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)

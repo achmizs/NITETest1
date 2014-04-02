@@ -8,16 +8,18 @@
     <Canvas x:Name="mainCanvas">
         <Image Height="Auto" Width="Auto" Name="background" Stretch="Fill" StretchDirection="Both" Source="images/windows_background_1920_1080.jpg" />
 
-        <!--<Image Height="480" HorizontalAlignment="Left" Name="depthImage" Stretch="Fill" VerticalAlignment="Top" Width="640" Grid.ColumnSpan="2" />-->
-
-        <Border x:Name="leftTarget" Canvas.Top="0" Canvas.Left="300" Background="Crimson" Width="200" Height="2400" />
-        <Border x:Name="rightTarget" Canvas.Top="0" Canvas.Right="300" Background="Crimson" Width="200" Height="2400" />
+        <Border x:Name="leftTarget" Canvas.Top="0" Canvas.Left="300" Background="Crimson" Width="200" Height="1081" />
+        <Border x:Name="rightTarget" Canvas.Top="0" Canvas.Right="300" Background="Crimson" Width="200" Height="1081" />
 
         <Ellipse x:Name="cursorOutline" Stroke="White" StrokeThickness="10" Canvas.Left="99" Canvas.Top="129" Width="82" Height="82"></Ellipse>
         <Ellipse x:Name="cursor" Stroke="Blue" StrokeThickness="9" Canvas.Left="100" Canvas.Top="130" Width="80" Height="80"></Ellipse>
 
 
         <!--<Image Height="1200" Width="3200" x:Name="test" Source="images/space.jpg" />-->
-        <!--<Rectangle x:Name="verticalCursor" Canvas.Top="0" Canvas.Left="300" Stroke="White" Fill="White" StrokeThickness="2" Width="11" Height="2400" />-->
+
+        <Rectangle x:Name="verticalCursor" Canvas.Top="0" Canvas.Left="300" Stroke="White" Fill="White" StrokeThickness="2" Width="11" Height="1080" />
+
+        <Image Name="depthImage" Height="480" Width="640" />
+        <Ellipse Name="depthImageCursor" Stroke="White" Fill="White" Canvas.Right="0" Canvas.Bottom="0" Width="10" Height="10" />
     </Canvas>
 </Window>

@@ -24,8 +24,16 @@ namespace NITETest1
     /// </summary>
     public partial class MainWindow : Window
     {
+        // MEMBER VARIABLES
+        
         // Tracking the cursor.
         private NUICursorTracker cursorTracker;
+
+        // Logging the cursor.
+        private NUICursorLogger logger;
+
+        // Capturing the depth image.
+        private NUIDepthGenerator depthGenerator;
 
         // Background images.
         private BitmapImage windowsBackground;
@@ -48,6 +56,9 @@ namespace NITETest1
 
         private const float DEFAULT_UPDATE_FPS = 60f;
 
+
+        // METHODS
+
         public MainWindow()
         {
             InitializeComponent();
@@ -57,15 +68,32 @@ namespace NITETest1
         {
             DrawCursorAtPosition(cursorTracker.cursorPosition);
 
+            // Log the current cursor location.
+            logger.AddPoint(cursorTracker.cursorPosition);
+
+            DrawDebugImage();
+
             // Checking for clicks and setting background.
             checkForTargetHover();
             if (clickedLeft)
             {
                 background.Source = aquamarinePic;
+
+                // Log the click.
+                logger.AddMark("Clicked LEFT target.");
+
+                // Write out the log file.
+                logger.WriteOutLog();
             }
             else if (clickedRight)
             {
                 background.Source = archipelagoPic;
+
+                // Log the click.
+                logger.AddMark("Clicked RIGHT target.");
+
+                // Write out the log file.
+                logger.WriteOutLog();
             }
         }
 
@@ -88,22 +116,38 @@ namespace NITETest1
             //    mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)).Equals(leftTarget))
             if(cursorIsHoveringOnElement(leftTarget))
             {
-                //Console.WriteLine("Hitting left target!");
+                // Log cursor entering target.
+                if (framesHovering == 0)
+                    logger.AddMark("Entered LEFT target.");
+                
                 framesHovering++;
                 if (framesHovering > updateFPS * hoverTimeThreshold)
+                {
                     clickedLeft = true;
+                    framesHovering = 1;
+                }
             }
             //else if (mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)) != null &&
             //    mainCanvas.InputHitTest(new System.Windows.Point(cursorPosition.X, cursorPosition.Y)).Equals(rightTarget))
             else if (cursorIsHoveringOnElement(rightTarget))
             {
-                //Console.WriteLine("Hitting right target!");
+                // Log cursor entering target.
+                if (framesHovering == 0)
+                    logger.AddMark("Entered RIGHT target.");
+
                 framesHovering++;
                 if (framesHovering > updateFPS * hoverTimeThreshold)
+                {
                     clickedRight = true;
+                    framesHovering = 1;
+                }
             }
             else
             {
+                // Log cursor exiting target.
+                if (framesHovering > 0)
+                    logger.AddMark("Exited target.");
+                
                 //Console.WriteLine("Not hitting any target!");
                 framesHovering = 0;
             }
@@ -116,10 +160,20 @@ namespace NITETest1
             this.cursorOutline.SetValue(Canvas.LeftProperty, position.X - (cursorOutline.Width / 2));
             this.cursorOutline.SetValue(Canvas.TopProperty, position.Y - (cursorOutline.Height / 2));
 
-            //this.verticalCursor.SetValue(Canvas.LeftProperty, position.X - (verticalCursor.Width / 2));
+            this.verticalCursor.SetValue(Canvas.LeftProperty, position.X - (verticalCursor.Width / 2));
 
             //Canvas.SetTop(test, position.Y);
             //Canvas.SetLeft(test, position.X);
+        }
+
+        private void DrawDebugImage()
+        {
+            // Update the depth image.
+            depthImage.Source = BitmapImageFromBitmap(depthGenerator.depthImage);
+
+            // Update the position of the debug cursor (displayed on the depth image).
+            depthImageCursor.SetValue(Canvas.LeftProperty, Canvas.GetLeft(depthImage) + cursorTracker.projectedHandPosition.X + 320 - (depthImageCursor.Width / 2));
+            depthImageCursor.SetValue(Canvas.TopProperty, Canvas.GetTop(depthImage) + (cursorTracker.projectedHandPosition.Y * -1) + 240 - (depthImageCursor.Height / 2));
         }
 
         private void SetupUI()
@@ -143,6 +197,10 @@ namespace NITETest1
 
             backgroundPics = new List<BitmapImage>();
             backgroundPics.Add(windowsBackground);
+
+            // Position the debug image.
+            Canvas.SetLeft(depthImage, mainCanvas.Width - depthImage.Width);
+            Canvas.SetTop(depthImage, mainCanvas.Height - depthImage.Height);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -158,6 +216,14 @@ namespace NITETest1
                 // Create the cursor tracker and have it start tracking.
                 cursorTracker = new NUICursorTracker();
                 cursorTracker.StartTracking();
+
+                // Create the cursor logger and open a log file.
+                logger = new NUICursorLogger();
+                logger.OpenLogFile(System.IO.Path.Combine(Environment.CurrentDirectory, @"..\..\logs\log1.txt"));
+
+                // Create the depth generator and have it start capturing the depth image.
+                depthGenerator = new NUIDepthGenerator();
+                depthGenerator.StartGenerating();
 
                 // Hover detection stuff
                 framesHovering = 0;
