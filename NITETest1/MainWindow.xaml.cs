@@ -16,6 +16,7 @@ using System.Drawing.Imaging;
 using System.Windows.Threading;
 using System.IO;
 using NUIResearchTools;
+using System.Threading;
 
 namespace NITETest1
 {
@@ -51,6 +52,7 @@ namespace NITETest1
         static float hoverTimeThreshold = 0.5f;
         bool clickedLeft;
         bool clickedRight;
+        Timer flashTimer;
 
         public float updateFPS { get; set; }
 
@@ -77,7 +79,8 @@ namespace NITETest1
             checkForTargetHover();
             if (clickedLeft)
             {
-                background.Source = aquamarinePic;
+                //background.Source = aquamarinePic;
+                FlashTarget(leftTarget);
 
                 // Log the click.
                 logger.AddMark("Clicked LEFT target.");
@@ -87,7 +90,8 @@ namespace NITETest1
             }
             else if (clickedRight)
             {
-                background.Source = archipelagoPic;
+                //background.Source = archipelagoPic;
+                FlashTarget(rightTarget);
 
                 // Log the click.
                 logger.AddMark("Clicked RIGHT target.");
@@ -95,6 +99,20 @@ namespace NITETest1
                 // Write out the log file.
                 logger.WriteOutLog();
             }
+        }
+
+        private void FlashTarget(Border target)
+        {
+            target.Background = System.Windows.Media.Brushes.Yellow;
+            flashTimer = new Timer(obj => { deFlashTarget(target); }, null, 150, System.Threading.Timeout.Infinite);
+
+        }
+
+        private void deFlashTarget(Border target)
+        {
+            Dispatcher.Invoke( new Action(() => {
+                target.Background = System.Windows.Media.Brushes.Crimson;
+            }));
         }
 
         private bool cursorIsHoveringOnElement(FrameworkElement element)
@@ -155,10 +173,10 @@ namespace NITETest1
 
         private void DrawCursorAtPosition(PointF position)
         {
-            this.cursor.SetValue(Canvas.LeftProperty, position.X - (cursor.Width / 2));
-            this.cursor.SetValue(Canvas.TopProperty, position.Y - (cursor.Height / 2));
-            this.cursorOutline.SetValue(Canvas.LeftProperty, position.X - (cursorOutline.Width / 2));
-            this.cursorOutline.SetValue(Canvas.TopProperty, position.Y - (cursorOutline.Height / 2));
+            //this.cursor.SetValue(Canvas.LeftProperty, position.X - (cursor.Width / 2));
+            //this.cursor.SetValue(Canvas.TopProperty, position.Y - (cursor.Height / 2));
+            //this.cursorOutline.SetValue(Canvas.LeftProperty, position.X - (cursorOutline.Width / 2));
+            //this.cursorOutline.SetValue(Canvas.TopProperty, position.Y - (cursorOutline.Height / 2));
 
             this.verticalCursor.SetValue(Canvas.LeftProperty, position.X - (verticalCursor.Width / 2));
 
