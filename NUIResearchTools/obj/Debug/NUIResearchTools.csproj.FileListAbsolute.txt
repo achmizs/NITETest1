@@ -14,3 +14,4 @@ C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTool
 C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTools\obj\Debug\NUIResearchTools.csprojResolveAssemblyReference.cache
 C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTools\obj\Debug\NUIResearchTools.dll
 C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTools\obj\Debug\NUIResearchTools.pdb
+C:\Users\obormot\documents\visual studio 2010\Projects\NITETest1\NUIResearchTools\bin\Debug\XnVNITE.net.dll

@@ -190,8 +190,10 @@ namespace NITETest1
             depthImage.Source = BitmapImageFromBitmap(depthGenerator.depthImage);
 
             // Update the position of the debug cursor (displayed on the depth image).
-            depthImageCursor.SetValue(Canvas.LeftProperty, Canvas.GetLeft(depthImage) + cursorTracker.projectedHandPosition.X + 320 - (depthImageCursor.Width / 2));
-            depthImageCursor.SetValue(Canvas.TopProperty, Canvas.GetTop(depthImage) + (cursorTracker.projectedHandPosition.Y * -1) + 240 - (depthImageCursor.Height / 2));
+            //depthImageCursor.SetValue(Canvas.LeftProperty, Canvas.GetLeft(depthImage) + cursorTracker.projectedHandPosition.X + 320 - (depthImageCursor.Width / 2));
+            //depthImageCursor.SetValue(Canvas.TopProperty, Canvas.GetTop(depthImage) + (cursorTracker.projectedHandPosition.Y * -1) + 240 - (depthImageCursor.Height / 2));
+            depthImageCursor.SetValue(Canvas.LeftProperty, Canvas.GetLeft(depthImage) + cursorTracker.projectedHandPosition.X - (depthImageCursor.Width / 2));
+            depthImageCursor.SetValue(Canvas.TopProperty, Canvas.GetTop(depthImage) + (cursorTracker.projectedHandPosition.Y) - (depthImageCursor.Height / 2));
         }
 
         private void SetupUI()

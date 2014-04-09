@@ -37,7 +37,7 @@ namespace NUIResearchTools
 
             // Set up cursor shaping.
             shaper = new NUICursorShaper();
-            NUICursorSpaceTransform space = new NUICursorSpaceTransform(new RectangleF(-320, -240, 640, 480), new RectangleF(0, 0, (float)System.Windows.SystemParameters.PrimaryScreenWidth, (float)System.Windows.SystemParameters.PrimaryScreenHeight), false, true, NUICursorSpaceTransform.NUI_CURSOR_SPACE_TRANSFORM_MODE.FILL);
+            NUICursorSpaceTransform space = new NUICursorSpaceTransform(new RectangleF(0, 0, 640, 480), new RectangleF(0, 0, (float)System.Windows.SystemParameters.PrimaryScreenWidth, (float)System.Windows.SystemParameters.PrimaryScreenHeight), false, false, NUICursorSpaceTransform.NUI_CURSOR_SPACE_TRANSFORM_MODE.FILL);
             shaper.addTransform(space);
             NUICursorJitterTransform jitter = new NUICursorJitterTransform();
             shaper.addTransform(jitter);
